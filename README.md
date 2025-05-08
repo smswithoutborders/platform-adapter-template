@@ -27,7 +27,7 @@ The template includes the following files:
 
 ### Step 1: Implement the Adapter
 
-> [!WARN]
+> [!WARNING]
 >
 > Avoid modifying `protocol_interfaces.py` or `ipc_service.py` unless necessary. Changes may cause incompatibilities with the host system.
 
@@ -91,7 +91,9 @@ You can test the adapter using standard IPC messages sent through stdin:
 echo '{"method": "get_authorization_url", "params": {"autogenerate_code_verifier": true}}' | python3 main.py
 ```
 
-Replace `get_authorization_url` with other supported methods (`get_access_token`, `send_message`, etc.), and update `params` accordingly.
+> [!NOTE]
+>
+> Replace `get_authorization_url` with other supported methods (`get_access_token`, `send_message`, etc.), and update `params` accordingly.
 
 ---
 
