@@ -83,45 +83,43 @@ class OAuth2ProtocolInterface(BaseProtocolInterface):
         """
 
     @abstractmethod
-    def get_access_token(self, code: str, **kwargs) -> Dict[str, Any]:
+    def exchange_code_and_fetch_user_info(
+        self, code: str, **kwargs
+    ) -> Dict[str, Dict[str, Any]]:
         """
-        Exchange the authorization code for an access token.
+        Exchange the authorization code for an access token and retrieve user information.
 
         Args:
             code (str): The authorization code received from the OAuth2 provider.
-            kwargs: Additional parameters required for the token exchange.
+            kwargs: Additional parameters required for the process.
 
         Returns:
-            Dict[str, Any]: A dictionary containing the following keys:
-                - access_token (str): The access token for the user.
-                - refresh_token (str): The refresh token for the user.
-                - id_token (str): The ID token for the user, if applicable.
+            Dict[str, Dict[str, Any]]: A dictionary containing the following keys:
+                - token (Dict[str, Any]): A dictionary containing:
+                    - access_token (str): The access token for the user.
+                    - refresh_token (str): The refresh token for the user.
+                    - id_token (str, optional): The ID token for the user, if applicable.
+                    - other metadata as provided by the platform.
+                - userinfo (Dict[str, Any]): A dictionary containing:
+                    - account_identifier (str): A unique identifier for the user, such as
+                      an email address or username.
+                    - name (str, optional): The full name of the user, if available.
         """
 
     @abstractmethod
-    def get_user_info(self, **kwargs) -> Dict[str, Any]:
-        """
-        Retrieve user information using the access token.
-
-        Args:
-            kwargs: Additional parameters required for retrieving user information.
-
-        Returns:
-            Dict[str, Any]: A dictionary containing the following keys:
-            - account_identifier (str): A unique identifier for the user, such as
-              an email address or username.
-            - name (str, optional): The full name of the user, if available.
-        """
-
-    @abstractmethod
-    def revoke_token(self, **kwargs) -> bool:
+    def revoke_token(self, token: Dict[str, str], **kwargs) -> bool:
         """
         Revoke the access token.
 
-        This method should invalidate the access token, ensuring it can no longer
+        This method invalidates the provided tokens, ensuring they can no longer
         be used for authentication.
 
         Args:
+            token (Dict[str, str]): A dictionary containing token details:
+                - access_token (str): The token to be revoked.
+                - refresh_token (str): The refresh token to be invalidated.
+                - id_token (str, optional): The ID token, if applicable.
+                - other metadata as provided by the platform.
             kwargs: Additional parameters required for token revocation.
 
         Returns:
@@ -129,14 +127,27 @@ class OAuth2ProtocolInterface(BaseProtocolInterface):
         """
 
     @abstractmethod
-    def send_message(self, message: str, **kwargs) -> bool:
+    def send_message(
+        self, token: Dict[str, str], message: str, **kwargs
+    ) -> Dict[str, Any]:
         """
         Send a message to the specified recipient.
 
         Args:
+            token (Dict[str, str]): A dictionary containing token details:
+                - access_token (str): The token to be revoked.
+                - refresh_token (str): The refresh token to be invalidated.
+                - id_token (str, optional): The ID token, if applicable.
+                - other metadata as provided by the platform.
             message (str): The content of the message to be sent.
             kwargs: Additional parameters required for sending the message.
 
         Returns:
-            bool: True if the message was sent successfully, False otherwise.
+            Dict[str, Any]: A dictionary containing:
+                - success (bool): True if the message was sent successfully, False otherwise.
+                - refreshed_token (Dict[str, Any]): A dictionary containing:
+                    - access_token (str): The access token for the user.
+                    - refresh_token (str): The refresh token for the user.
+                    - id_token (str, optional): The ID token for the user, if applicable.
+                    - other metadata as provided by the platform.
         """

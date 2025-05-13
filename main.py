@@ -9,6 +9,12 @@ from ipc_service import AdapterIPCService
 
 
 def main():
+    """
+    Entry point for starting the Adapter's IPC service.
+
+    This script initializes and starts the AdapterIPCService
+    for inter-process communication.
+    """
     # Instantiate the adapter class here (e.g., GmailOAuth2Adapter)
     adapter = GmailOAuth2Adapter()
     service = AdapterIPCService(adapter)
