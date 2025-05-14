@@ -68,6 +68,9 @@ name = gmail
 shortcode = g
 protocol = oauth2
 service_type = email
+icon_svg = https://raw.githubusercontent.com/smswithoutborders/gmail-oauth2-adapter/main/icons/gmail.svg
+icon_png = https://raw.githubusercontent.com/smswithoutborders/gmail-oauth2-adapter/main/icons/gmail.png
+support_url_scheme = false
 ```
 
 #### `config.ini`
@@ -77,25 +80,11 @@ Points to authentication credentials and defines asset directories.
 ```ini
 [credentials]
 path = ./credentials.json
-
-[static_assets]
-# Paths to assets that can be changed by the adapter.
-icons_dir_path = ./icons
-
-[persistent_assets]
-# Paths to assets that are managed by the host and should persist across runs.
-# These should always be added to `.gitignore` in the adapter.
-sessions_dir_path = ./sessions
 ```
 
 > [!NOTE]
 >
 > - Ensure `credentials.json` exists and contains valid keys, secrets, or tokens per your platform’s requirements.
-> - Always add persistent asset paths to your `.gitignore` to avoid committing sensitive or runtime data.
-
-> [!TIP]
->
-> - Icon files in the directory specified by `icons_dir_path` in `config.ini` (by default `icons`) should be named after the adapter's `name` as defined in `manifest.ini` (e.g., `gmail.svg` or `gmail.png`).
 
 ---
 
