@@ -8,11 +8,32 @@ Run it with:
 
 Against the unmodified template stub, commands fail until you implement
 `adapter.py`. Use this harness to exercise your implementation as you build
-it out.
+it out. The token is persisted to `tests/session.json`.
 """
 
 import cmd
 import json
+from pathlib import Path
+from typing import Any, Dict, Optional
+
+SESSION_FILE = Path(__file__).parent / "session.json"
+
+
+def _load_token() -> Optional[Dict[str, Any]]:
+    try:
+        with SESSION_FILE.open(encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return None
+
+
+def _save_token(token: Dict[str, Any]) -> None:
+    with SESSION_FILE.open("w", encoding="utf-8") as f:
+        json.dump(token, f, indent=2)
+
+
+def _clear_token() -> None:
+    SESSION_FILE.unlink(missing_ok=True)
 
 
 class OAuth2AdapterClient(cmd.Cmd):
@@ -22,7 +43,7 @@ class OAuth2AdapterClient(cmd.Cmd):
     def __init__(self, adapter):
         super().__init__()
         self.adapter = adapter
-        self.token = None
+        self.token = _load_token()
 
     def _call(self, fn, *args, on_success=None, **kwargs):
         """Invoke an adapter method, pretty-print the result, and run an
@@ -53,6 +74,7 @@ class OAuth2AdapterClient(cmd.Cmd):
         def store_token(result):
             if "token" in result:
                 self.token = result["token"]
+                _save_token(self.token)
 
         self._call(
             self.adapter.exchange_code_and_fetch_user_info, code, on_success=store_token
@@ -71,6 +93,7 @@ class OAuth2AdapterClient(cmd.Cmd):
         def update_token(result):
             if result.get("refreshed_token"):
                 self.token = result["refreshed_token"]
+                _save_token(self.token)
 
         self._call(
             self.adapter.send_message,
@@ -88,6 +111,7 @@ class OAuth2AdapterClient(cmd.Cmd):
         def clear_token(result):
             if result:
                 self.token = None
+                _clear_token()
 
         self._call(self.adapter.revoke_token, token=self.token, on_success=clear_token)
 

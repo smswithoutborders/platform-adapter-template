@@ -216,7 +216,7 @@ echo '{"method": "get_authorization_url", "params": {}}' | python3 main.py
 
 ### Interactive Test Client
 
-For exercising a multi-step flow (auth → exchange → send → revoke) without hand-crafting IPC JSON each time, use the interactive REPL in `tests/client.py`:
+For exercising a multi-step flow without hand-crafting IPC JSON each time, use the interactive REPL in `tests/client.py`. The token is persisted to `tests/session.json`:
 
 ```bash
 python -m tests.client
